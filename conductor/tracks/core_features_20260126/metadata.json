@@ -1,0 +1,8 @@
+{
+  "track_id": "core_features_20260126",
+  "type": "feature",
+  "status": "new",
+  "created_at": "2026-01-26T00:00:00Z",
+  "updated_at": "2026-01-26T00:00:00Z",
+  "description": "Implement the core functionality for user authentication, fruitcake photo selection, email sending, and basic map tracking of the photo's journey."
+}
