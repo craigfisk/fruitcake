@@ -4,7 +4,7 @@ This plan outlines the steps to implement the core features of the Fruitcake App
 
 ## Phase 1: User Authentication and Subscription Management
 
-- [ ] **Task: Set up backend for user authentication**
+- [x] **Task: Set up backend for user authentication** [5e2c566]
     - [ ] Write Tests: For user registration, login, and logout endpoints.
     - [ ] Implement: User registration, login, and logout functionalities using FastAPI and Supabase.
 - [ ] **Task: Integrate subscription management with Supabase**
