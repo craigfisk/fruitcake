@@ -1,0 +1,27 @@
+{
+  "ui": {
+    "hideTips": true,
+    "hideBanner": true,
+    "accessibility": {
+       "disableLoadingPhrases": true
+     }
+  },
+  "security": {
+    "auth": {
+      "selectedType": "compute-default-credentials"
+    }
+  },
+  "tools": {
+    "autoAccept": true
+  },
+  "disableYolo": false,
+  "disableYoloMode": false,
+  "toolPermissions": {
+    "alwaysAllow": [
+      "ls",
+      "list_directory",
+      "read_file",
+      "run_shell_command"
+    ]
+  }
+}
