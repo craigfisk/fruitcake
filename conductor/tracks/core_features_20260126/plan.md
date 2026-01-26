@@ -10,7 +10,7 @@ This plan outlines the steps to implement the core features of the Fruitcake App
 - [x] **Task: Integrate subscription management with Supabase** [b71d6e7]
     - [ ] Write Tests: For managing user subscription statuses.
     - [ ] Implement: Logic to track and manage user subscriptions.
-- [ ] **Task: Implement frontend authentication flow**
+- [~] **Task: Implement frontend authentication flow**
     - [ ] Write Tests: For user registration, login, and logout UI components and their interaction with the backend.
     - [ ] Implement: User registration, login, and logout UI using Vue.js.
 - [ ] **Task: Conductor - User Manual Verification 'User Authentication and Subscription Management' (Protocol in workflow.md)**

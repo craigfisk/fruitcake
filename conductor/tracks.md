@@ -4,5 +4,5 @@ This file tracks all major tracks for the project. Each track has its own detail
 
 ---
 
-- [ ] **Track: Implement the core functionality for user authentication, fruitcake photo selection, email sending, and basic map tracking of the photo's journey.**
+- [~] **Track: Implement the core functionality for user authentication, fruitcake photo selection, email sending, and basic map tracking of the photo's journey.**
   *Link: [./tracks/core_features_20260126/](./tracks/core_features_20260126/)*
