@@ -3,8 +3,9 @@
     "hideTips": true,
     "hideBanner": true,
     "accessibility": {
-       "disableLoadingPhrases": true
-     }
+      "disableLoadingPhrases": true,
+      "enableLoadingPhrases": false
+    }
   },
   "security": {
     "auth": {
