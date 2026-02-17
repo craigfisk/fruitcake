@@ -7,32 +7,38 @@ from supabase import create_client, Client
 app = FastAPI()
 
 # Supabase configuration - Replace with your actual credentials
-SUPABASE_URL = "https://your-supabase-url.supabase.co"
-SUPABASE_KEY = "your-anon-key"
+SUPABASE_URL = "http://127.0.0.1:54321"
+SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZS1kZW1vIiwicm9sZSI6ImFub24iLCJleHAiOjE5ODM4MTI5OTZ9.CRXP1A7WOeoJeXxjNni43kdQwgnWNReilDMblYTn_I0"
 supabase: Client = create_client(SUPABASE_URL, SUPABASE_KEY)
 
 # Mock user database
 fake_users_db = {}
 
+
 class User(BaseModel):
     email: str
     password: str
+
 
 class UserInDB(User):
     id: int
     subscription_status: str = "free"
 
+
 class Token(BaseModel):
     access_token: str
     token_type: str
 
+
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
+
 
 def get_user(db, email: str):
     for user in db.values():
         if user.email == email:
             return user
     return None
+
 
 async def get_current_user(token: str = Depends(oauth2_scheme)):
     # In a real app, you'd decode the token and get the user from the database
@@ -47,6 +53,7 @@ def create_user(user: User):
     fake_users_db[user_id] = user_in_db
     return user_in_db
 
+
 @app.post("/token", response_model=Token)
 def login_for_access_token(form_data: OAuth2PasswordRequestForm = Depends()):
     user = get_user(fake_users_db, form_data.username)
@@ -59,16 +66,17 @@ def login_for_access_token(form_data: OAuth2PasswordRequestForm = Depends()):
     access_token = "some_token"
     return {"access_token": access_token, "token_type": "bearer"}
 
+
 @app.post("/logout")
 def logout(token: str = Depends(oauth2_scheme)):
     return {"message": "Successfully logged out"}
+
 
 @app.get("/users/me", response_model=UserInDB)
 async def read_users_me(current_user: UserInDB = Depends(get_current_user)):
     return current_user
 
+
 @app.get("/")
 def read_root():
     return {"Hello": "World"}
-
-
