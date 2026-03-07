@@ -15,6 +15,6 @@
 - **Google Cloud Platform (GCP):** For hosting the FastAPI backend and Vue.js frontend.
 
 ## Other Tools/Considerations
-- **Email Service Integration:** For sending fruitcake photos.
-- **Mapping Service:** Google Maps for visualizing the journey of the fruitcake photos.
+- **Email Service Integration:** For sending fruitcake notes.
+- **Mapping Service:** Google Maps for visualizing the journey of the fruitcake notes.
 - **Image Gallery/Storage:** For managing high-quality fruitcake images.

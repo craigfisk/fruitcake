@@ -18,14 +18,14 @@ app = FastAPI()
 app.mount("/static", StaticFiles(directory="static"), name="static")
 templates = Jinja2Templates(directory="templates")
 
-BUCKET_NAME = "photos"
+BUCKET_NAME = "notes"
 
 # Gallery page
 @app.get("/", response_class=HTMLResponse)
 def gallery(request: Request):
-    data = supabase.table("photos").select("*").execute().data
+    data = supabase.table("notes").select("*").execute().data
     return templates.\
-        TemplateResponse("index.html", {"request": request, "photos": data})
+        TemplateResponse("index.html", {"request": request, "notes": data})
 
 # Upload form page
 @app.get("/upload", response_class=HTMLResponse)
@@ -49,7 +49,7 @@ async def upload_photo(title: str = Form(...), file: UploadFile = Form(...)):
         public_url = supabase.storage.from_(BUCKET_NAME).get_public_url(filename)
 
         # Insert record into database
-        supabase.table("photos").\
+        supabase.table("notes").\
             insert({"title": title, "image_url": public_url}).execute()
 
         return RedirectResponse("/", status_code=303)
@@ -60,7 +60,7 @@ async def upload_photo(title: str = Form(...), file: UploadFile = Form(...)):
 @app.post("/delete/{photo_id}")
 def delete_photo(photo_id: int):
     # Get photo info
-    data = supabase.table("photos").select("*").eq("id", photo_id).execute().data
+    data = supabase.table("notes").select("*").eq("id", photo_id).execute().data
     if not data:
         raise HTTPException(status_code=404, detail="Photo not found")
 
@@ -70,6 +70,6 @@ def delete_photo(photo_id: int):
     supabase.storage.from_(BUCKET_NAME).remove([filename])
 
     # Delete from table
-    supabase.table("photos").delete().eq("id", photo_id).execute()
+    supabase.table("notes").delete().eq("id", photo_id).execute()
 
     return RedirectResponse("/", status_code=303)

@@ -139,7 +139,7 @@ def test_func():
 ### Download a file from Storage
 
 ```python
-bucket_name: str = "photos"
+bucket_name: str = "notes"
 
 data = supabase.storage.from_(bucket_name).download("photo1.png")
 ```
@@ -147,7 +147,7 @@ data = supabase.storage.from_(bucket_name).download("photo1.png")
 ### Upload a file
 
 ```python
-bucket_name: str = "photos"
+bucket_name: str = "notes"
 new_file = getUserFile()
 
 data = supabase.storage.from_(bucket_name).upload("/user1/profile.png", new_file)
@@ -156,7 +156,7 @@ data = supabase.storage.from_(bucket_name).upload("/user1/profile.png", new_file
 ### Remove a file
 
 ```python
-bucket_name: str = "photos"
+bucket_name: str = "notes"
 
 data = supabase.storage.from_(bucket_name).remove(["old_photo.png", "image5.jpg"])
 ```
