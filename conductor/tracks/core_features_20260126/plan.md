@@ -24,25 +24,25 @@ This plan outlines the steps to implement the core features of the Fruitcake App
     - [ ] Write Tests: For UI components displaying the fruitcake image gallery.
     - [ ] Implement: Vue.js components to display and select fruitcake images.
 - [ ] **Task: Implement photo customization features**
-    - [ ] Write Tests: For backend and frontend logic to add personalized messages to photos.
+    - [ ] Write Tests: For backend and frontend logic to add personalized messages to notes.
     - [ ] Implement: Backend and frontend functionality for users to add personalized messages.
 - [ ] **Task: Implement photo preview functionality**
-    - [ ] Write Tests: For UI component to preview customized fruitcake photos.
+    - [ ] Write Tests: For UI component to preview customized fruitcake notes.
     - [ ] Implement: Vue.js component to display a preview of the customized photo.
 - [ ] **Task: Conductor - User Manual Verification 'Fruitcake Photo Selection and Customization' (Protocol in workflow.md)**
 
-## Phase 3: Email Integration for Sending Fruitcake Photos
+## Phase 3: Email Integration for Sending Fruitcake notes
 
 - [ ] **Task: Set up email sending service**
     - [ ] Write Tests: For email sending utility.
     - [ ] Implement: Backend integration with an email service to send emails.
-- [ ] **Task: Implement backend endpoint for sending fruitcake photos**
-    - [ ] Write Tests: For endpoint to handle sending customized fruitcake photos to recipients.
+- [ ] **Task: Implement backend endpoint for sending fruitcake notes**
+    - [ ] Write Tests: For endpoint to handle sending customized fruitcake notes to recipients.
     - [ ] Implement: FastAPI endpoint to receive customized photo data and send emails.
-- [ ] **Task: Develop frontend UI for sending photos**
+- [ ] **Task: Develop frontend UI for sending notes**
     - [ ] Write Tests: For UI components to input recipient email addresses and trigger sending.
     - [ ] Implement: Vue.js components for recipient input and sending functionality.
-- [ ] **Task: Conductor - User Manual Verification 'Email Integration for Sending Fruitcake Photos' (Protocol in workflow.md)**
+- [ ] **Task: Conductor - User Manual Verification 'Email Integration for Sending Fruitcake notes' (Protocol in workflow.md)**
 
 ## Phase 4: Real-time Tracking and Visualization on a Map
 
