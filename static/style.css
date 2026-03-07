@@ -1,112 +1,160 @@
-body, h1, h3, p, form {
-    margin: 0;
-    padding: 0;
-    font-family: Arial, sans-serif;
-}
-
+/* --------------------------
+   Body & background
+--------------------------- */
 body {
-    background-color: #f4f4f9;
-    color: #333;
-    padding: 20px;
-}
-
-header {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: #1f2937; /* dark background */
+    color: #f3f4f6; /* light text */
     display: flex;
-    justify-content: space-between;
+    justify-content: center;
     align-items: center;
-    margin-bottom: 30px;
+    min-height: 100vh;
+    margin: 0;
 }
 
-h1 {
-    color: #444;
-}
-
-a.btn {
-    text-decoration: none;
-    padding: 10px 20px;
-    border-radius: 5px;
-    font-weight: bold;
-    transition: transform 0.2s;
-}
-
-a.btn:hover {
-    transform: scale(1.05);
-}
-
-.btn-primary {
-    background-color: #4caf50;
-    color: white;
-}
-
-.btn-secondary {
-    background-color: #2196f3;
-    color: white;
-}
-
-.btn-danger {
-    background-color: #f44336;
-    color: white;
-    border: none;
-    cursor: pointer;
-    padding: 12px 25px;  
-    font-size: 16px;   
-    border-radius: 5px;
-}
-
-.btn-danger:hover {
-    opacity: 0.9;
-    transform: scale(1.05);
-}
-
-.gallery {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-    gap: 20px;
-}
-
-.photo-card {
-    background: white;
-    padding: 15px;
-    border-radius: 10px;
-    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+/* --------------------------
+   Panel
+--------------------------- */
+.panel {
+    background-color: #111827; /* dark panel */
+    padding: 40px;
+    border-radius: 12px;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+    width: 100%;
+    max-width: 450px;
     text-align: center;
 }
 
-.photo-card img {
+/* --------------------------
+   Titles
+--------------------------- */
+h1, h2, h3 {
+    color: #f3f4f6;
+    margin-bottom: 20px;
+}
+
+/* --------------------------
+   Input fields
+--------------------------- */
+input[type="text"],
+input[type="email"],
+input[type="password"],
+textarea {
     width: 100%;
-    height: 200px;
-    object-fit: cover;
+    padding: 12px 15px;
+    margin: 8px 0 16px 0;
+    border: 1px solid #374151;
     border-radius: 8px;
-    margin-bottom: 10px;
+    background-color: #1f2937;
+    color: #f3f4f6;
+    box-sizing: border-box;
+    transition: all 0.3s;
+}
+input:focus, textarea:focus {
+    border-color: #3b82f6;
+    outline: none;
+    box-shadow: 0 0 0 2px rgba(59,130,246,0.5);
 }
 
-.photo-card h3 {
-    margin-bottom: 10px;
-}
-
-.upload-form {
-    background: white;
-    padding: 20px;
-    border-radius: 10px;
-    max-width: 400px;
-    margin: auto;
-    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-}
-
-.upload-form label {
-    display: block;
-    margin-bottom: 5px;
+/* --------------------------
+   Buttons
+--------------------------- */
+button {
+    width: 100%;
+    padding: 12px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
     font-weight: bold;
+    font-size: 16px;
+    transition: all 0.3s;
+    margin-top: 6px;
 }
 
-.upload-form input {
-    width: 100%;
-    padding: 8px;
-    margin-bottom: 15px;
-    border-radius: 5px;
-    border: 1px solid #ccc;
+/* Add Note button (blue) */
+.btn-primary {
+    background-color: #3b82f6;
+    color: white;
+}
+.btn-primary:hover {
+    background-color: #2563eb;
 }
 
-.upload-form button {
-    width: 100%;
+/* Delete button (red) */
+.btn-delete {
+    background-color: #ef4444;
+    color: white;
+}
+.btn-delete:hover {
+    background-color: #b91c1c;
+}
+
+/* Logout button (orange) */
+.btn-logout {
+    background-color: #f97316; /* orange */
+    color: white;
+}
+.btn-logout:hover {
+    background-color: #ea580c; /* dark orange */
+}
+
+/* Register button (green) */
+.btn-register {
+    background-color: #10b981;
+    color: white;
+}
+.btn-register:hover {
+    background-color: #059669;
+}
+
+/* Login button (blue) */
+.btn-login {
+    background-color: #3b82f6;
+    color: white;
+}
+.btn-login:hover {
+    background-color: #2563eb;
+}
+
+/* --------------------------
+   Links
+--------------------------- */
+a {
+    text-decoration: none;
+    color: #3b82f6;
+}
+a:hover {
+    text-decoration: underline;
+}
+
+/* --------------------------
+   Notes list
+--------------------------- */
+ul {
+    list-style: none;
+    padding: 0;
+}
+li {
+    background: #374151; /* dark gray block */
+    color: #f3f4f6;
+    padding: 12px 15px;
+    margin-bottom: 10px;
+    border-radius: 8px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+/* Small spacing between note text and delete button */
+li span {
+    max-width: 75%;
+    word-break: break-word;
+}
+
+/* --------------------------
+   Form spacing
+--------------------------- */
+form {
+    display: flex;
+    flex-direction: column;
 }
