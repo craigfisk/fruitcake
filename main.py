@@ -1,75 +1,144 @@
-from fastapi import FastAPI    , Request, UploadFile, Form, HTTPException
-from fastapi.responses import HTMLResponse, RedirectResponse
-from fastapi.staticfiles import StaticFiles
-from fastapi.templating import Jinja2Templates
-from supabase import create_client
 import os
+from fastapi import FastAPI, Request, Form, Depends, Response
+from fastapi.responses import RedirectResponse
+from fastapi.templating import Jinja2Templates
+from fastapi.staticfiles import StaticFiles
+from fastapi.middleware.cors import CORSMiddleware
+from supabase import create_client, Client
 from dotenv import load_dotenv
-import uuid
+from itsdangerous import URLSafeSerializer
 
 # Load environment variables
 load_dotenv()
-SUPABASE_URL = os.getenv("SUPABASE_URL")
-SUPABASE_KEY = os.getenv("SUPABASE_KEY")
-supabase = create_client(SUPABASE_URL, SUPABASE_KEY)
 
-# Initialize FastAPI
 app = FastAPI()
+
+# Middleware (optional CORS if you add frontend later)
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
+# Mount static files (CSS/JS if needed)
 app.mount("/static", StaticFiles(directory="static"), name="static")
+
+# Templates
 templates = Jinja2Templates(directory="templates")
 
-BUCKET_NAME = "notes"
+# Supabase setup
+url = os.getenv("SUPABASE_URL")
+key = os.getenv("SUPABASE_KEY")
+supabase: Client = create_client(url, key)
 
-# Gallery page
-@app.get("/", response_class=HTMLResponse)
-def gallery(request: Request):
-    data = supabase.table("notes").select("*").execute().data
-    return templates.\
-        TemplateResponse("index.html", {"request": request, "notes": data})
+# Session secret key
+SECRET_KEY = os.getenv("SECRET_KEY", "default-secret")
+serializer = URLSafeSerializer(SECRET_KEY)
 
-# Upload form page
-@app.get("/upload", response_class=HTMLResponse)
-def upload_form(request: Request):
-    return templates.TemplateResponse("upload.html", {"request": request})
 
-# Handle file upload
-@app.post("/upload")
-async def upload_photo(title: str = Form(...), file: UploadFile = Form(...)):
+# ------------------------------
+# Helper: get current user
+# ------------------------------
+def get_current_user(request: Request):
+    cookie = request.cookies.get("session")
+    if not cookie:
+        return None
     try:
-        # Generate unique filename
-        ext = file.filename.split(".")[-1]
-        filename = f"{uuid.uuid4()}.{ext}"
+        data = serializer.loads(cookie)
+        return data.get("user_id")
+    except Exception:
+        return None
 
-        # Read file contents
-        contents = await file.read()
-        # Upload to Supabase Storage
-        supabase.storage.from_(BUCKET_NAME).upload(filename, contents)
 
-        # Get public URL (string)
-        public_url = supabase.storage.from_(BUCKET_NAME).get_public_url(filename)
+# ------------------------------
+# Routes
+# ------------------------------
+@app.get("/")
+def home(request: Request, user_id: str = Depends(get_current_user)):
+    return templates.TemplateResponse(
+        "index.html", {"request": request, "user_id": user_id}
+    )
 
-        # Insert record into database
-        supabase.table("notes").\
-            insert({"title": title, "image_url": public_url}).execute()
 
-        return RedirectResponse("/", status_code=303)
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+@app.get("/register")
+def register_page(request: Request):
+    return templates.TemplateResponse("register.html", {"request": request})
 
-# Delete photo
-@app.post("/delete/{photo_id}")
-def delete_photo(photo_id: int):
-    # Get photo info
-    data = supabase.table("notes").select("*").eq("id", photo_id).execute().data
-    if not data:
-        raise HTTPException(status_code=404, detail="Photo not found")
 
-    photo = data[0]
-    # Delete from storage
-    filename = photo["image_url"].split("/")[-1]
-    supabase.storage.from_(BUCKET_NAME).remove([filename])
+@app.post("/register")
+def register(email: str = Form(...), password: str = Form(...)):
+    """Register new user using Supabase Auth"""
+    auth_res = supabase.auth.sign_up({"email": email, "password": password})
+    if auth_res.user:
+        return RedirectResponse("/login", status_code=302)
+    return {"error": "Registration failed"}
 
-    # Delete from table
-    supabase.table("notes").delete().eq("id", photo_id).execute()
 
-    return RedirectResponse("/", status_code=303)
+@app.get("/login")
+def login_page(request: Request):
+    return templates.TemplateResponse("login.html", {"request": request})
+
+
+@app.post("/login")
+def login(response: Response, email: str = Form(...), password: str = Form(...)):
+    """Login with Supabase Auth and set session cookie"""
+    auth_res = supabase.auth.sign_in_with_password(
+        {"email": email, "password": password}
+    )
+    if auth_res.session:
+        user_id = auth_res.user.id
+        # Store session in cookie
+        cookie_data = serializer.dumps({"user_id": user_id})
+        response = RedirectResponse("/notes", status_code=302)
+        response.set_cookie(key="session", value=cookie_data, httponly=True)
+        return response
+    return {"error": "Login failed"}
+
+
+@app.get("/logout")
+def logout(response: Response):
+    """Clear the session cookie"""
+    response = RedirectResponse("/", status_code=302)
+    response.delete_cookie("session")
+    return response
+
+
+@app.get("/notes")
+def get_notes(request: Request, user_id: str = Depends(get_current_user)):
+    """List notes for the current user"""
+    if not user_id:
+        return RedirectResponse("/login", status_code=302)
+
+    res = supabase.table("notes").select("*").eq("user_id", user_id).execute()
+    return templates.TemplateResponse(
+        "notes.html", {"request": request, "notes": res.data, "user_id": user_id}
+    )
+
+
+@app.post("/notes")
+def add_note(
+    request: Request,
+    title: str = Form(...),
+    content: str = Form(...),
+    user_id: str = Depends(get_current_user),
+):
+    """Add a note for the logged-in user"""
+    if not user_id:
+        return RedirectResponse("/login", status_code=302)
+
+    supabase.table("notes").insert(
+        {"title": title, "content": content, "user_id": user_id}
+    ).execute()
+    return RedirectResponse("/notes", status_code=302)
+
+
+@app.post("/notes/delete")
+def delete_note(note_id: str = Form(...), user_id: str = Depends(get_current_user)):
+    """Delete a note (only if it belongs to the logged-in user)"""
+    if not user_id:
+        return RedirectResponse("/login", status_code=302)
+
+    supabase.table("notes").delete().eq("id", note_id).eq("user_id", user_id).execute()
+    return RedirectResponse("/notes", status_code=302)
