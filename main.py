@@ -65,19 +65,37 @@ def home(request: Request, user_id: str = Depends(get_current_user)):
 async def favicon():
     return Response(status_code=404)
 
-@app.get("/register")
-def register_page(request: Request):
-    return templates.TemplateResponse("register.html", {"request": request})
-
-
-@app.post("/register")
-def register(email: str = Form(...), password: str = Form(...)):
-    """Register new user using Supabase Auth"""
-    auth_res = supabase.auth.sign_up({"email": email, "password": password})
-    if auth_res.user:
-        return RedirectResponse("/login", status_code=302)
-    return {"error": "Registration failed"}
-
+    def register(email: str = Form(...), password: str = Form(...)):                    
+         """Register new user using Supabase Auth"""                                     
+         try:                                                                            
+             auth_res = supabase.auth.sign_up({"email": email, "password": password})    
+             if auth_res.user:                                                           
+                 return RedirectResponse("/login", status_code=302)                      
+             return {"error": "Registration failed"}                                     
+         except Exception as e:                                                          
+             # Catch errors like "User already registered" instead of throwing 500       
+             return {"error": str(e)}                                                    
+          
+@app.get("/register")                                                               
+def register_page(request: Request):                                                
+    """Serves the registration HTML form to the user"""                             
+    return templates.TemplateResponse("register.html", {"request": request})        
+                                                                                         
+                                                                                         
+@app.post("/register")                                                              
+def register(email: str = Form(...), password: str = Form(...)):                    
+    """Processes the form submission and registers the user using Supabase          
+    Auth"""                                                                             
+    try:                                                                            
+        auth_res = supabase.auth.sign_up({"email": email, "password": password})    
+        if auth_res.user:                                                           
+        # If successful, redirect them to the login page                        
+            return RedirectResponse("/login", status_code=302)                      
+            return {"error": "Registration failed"}                                     
+    except Exception as e:                                                          
+        # Catch errors like "User already registered" instead of throwing a 500 error                                                                               
+        return {"error": str(e)}                                                    
+                                            
 
 @app.get("/login")
 def login_page(request: Request):
@@ -87,17 +105,21 @@ def login_page(request: Request):
 @app.post("/login")
 def login(response: Response, email: str = Form(...), password: str = Form(...)):
     """Login with Supabase Auth and set session cookie"""
-    auth_res = supabase.auth.sign_in_with_password(
-        {"email": email, "password": password}
-    )
-    if auth_res.session:
-        user_id = auth_res.user.id
-        # Store session in cookie
-        cookie_data = serializer.dumps({"user_id": user_id})
-        response = RedirectResponse("/notes", status_code=302)
-        response.set_cookie(key="session", value=cookie_data, httponly=True)
-        return response
-    return {"error": "Login failed"}
+    try:
+        auth_res = supabase.auth.sign_in_with_password(
+            {"email": email, "password": password}
+        )
+        if auth_res.session:
+            user_id = auth_res.user.id
+            # Store session in cookie
+            cookie_data = serializer.dumps({"user_id": user_id})
+            response = RedirectResponse("/notes", status_code=302)
+            response.set_cookie(key="session", value=cookie_data, httponly=True)
+            return response
+        return {"error": "Login failed"}
+    except Exception as e:
+        # Catch errors like "Invalid login credentials" instead of throwing 500
+        return {"error": str(e)}
 
 
 @app.get("/logout")
