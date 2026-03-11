@@ -61,6 +61,9 @@ def home(request: Request, user_id: str = Depends(get_current_user)):
         "index.html", {"request": request, "user_id": user_id}
     )
 
+@app.get("/favicon.ico", include_in_schema=False)
+async def favicon():
+    return Response(status_code=404)
 
 @app.get("/register")
 def register_page(request: Request):
